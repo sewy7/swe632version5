@@ -1,0 +1,26 @@
+{
+    "users": [
+      "Amin",
+      "Ben",
+      "Jessie",
+      "Bunny"
+    ],
+    "posts": [
+      {
+        "user": "Amin",
+        "content": "yoooooo"
+      },
+      {
+        "user": "Bunny",
+        "content": "Hello, world!"
+      },
+      {
+        "user": "Ben",
+        "content": "What's uuup?"
+      },
+      {
+        "user": "Jessie",
+        "content": "Yeeeeeaaaahhh"
+      }
+    ]
+  }
