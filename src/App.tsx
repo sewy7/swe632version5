@@ -88,7 +88,7 @@ function App() {
           <List>
             {posts.map((post, index) => (
               <ListItem key={post.id}>
-                <Avatar src={post.user.avatar} alt={post.user.name} />
+                <Avatar alt={post.user.name} />
                 <Box ml={2}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     {post.user.name}
