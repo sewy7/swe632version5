@@ -7,18 +7,22 @@
     ],
     "posts": [
       {
+        "id": 1,
         "user": "Amin",
         "content": "yoooooo"
       },
       {
+        "id": 2,
         "user": "Bunny",
         "content": "Hello, world!"
       },
       {
+        "id": 3,
         "user": "Ben",
         "content": "What's uuup?"
       },
       {
+        "id": 4,
         "user": "Jessie",
         "content": "Yeeeeeaaaahhh"
       }
