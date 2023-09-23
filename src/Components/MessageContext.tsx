@@ -8,9 +8,9 @@ export interface User {
     id: number;
     user: User;
     content: string;
-    Votes: Votes;
+    votes: {
+      upvotes: number;
+      downvotes: number;
+    };
   }
-
-  export interface Votes {
-    Count: number;
-  }
+  

@@ -1,6 +1,6 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# DA LLAMA
+We deploy from master branch see package.json.
+We merge code into main.
 
 ## Available Scripts
 

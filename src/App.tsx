@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
-import type { User, Post} from './MessageContext';
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Container, Box, TextField, Typography, List, ListItem, Avatar, Divider, Paper,} from "@mui/material";
 import { Send, ThumbUp, ThumbDown  } from "@mui/icons-material";
 import jsonData from "./data.json";
-
+import UserChangedNotification from "./Components/UserChangedNotification";
+import { Post, User } from "./Components/MessageContext";
 
 function App() {
-  const [users, setUsers] = useState(jsonData.users);
-  const [posts, setPosts] = useState(jsonData.posts);
+  const [users, setUsers] = useState<User[]>(jsonData.users);
+  const [posts, setPosts] = useState<Post[]>(jsonData.posts);
   const [newPost, setNewPost] = useState("");
-  const [currentID, setCurrentID] = useState(Number);
-  const [currentUser, setCurrentUser] = useState(users[0]);
-  const [upvotes, setUpvotes] = useState<number[]>([]);
-  const [downvotes, setDownvotes] = useState<number[]>([]);
+  const [currentID, setCurrentID] = useState(0);
+  const [currentUser, setCurrentUser] = useState<User>(jsonData.users[0])
+  const [upvotes, setUpvotes] = useState(new Array(posts.length).fill(0));
+  const [downvotes, setDownvotes] = useState(new Array(posts.length).fill(0));
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
   const addPost = () => {
     if (newPost.trim() !== "" && currentUser) {
@@ -20,7 +22,11 @@ function App() {
         id: currentID,
         user: currentUser,
         content: newPost,
+        votes: { upvotes: 0, downvotes: 0 },
       };
+
+      setCurrentID(currentID + 1);
+
       setPosts((prevPosts) => [...prevPosts, newPostObj]);
       setNewPost("");
       setUpvotes((prevUpvotes) => [...prevUpvotes, 0]);
@@ -28,27 +34,42 @@ function App() {
     }
   };
 
+  const scrollToBottom = () => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [posts]);
+
   const switchUser = () => {
     if (currentUser) {
       const currentIndex = users.indexOf(currentUser);
       const nextIndex = (currentIndex + 1) % users.length;
-      setCurrentUser(users[nextIndex]);
+      const newUser = users[nextIndex];
+      
+      setCurrentUser(newUser);
+      setIsNotificationOpen(true);
+  
+      setTimeout(() => {
+        setIsNotificationOpen(false);
+      }, 5000);
     }
   };
 
-  
   const handleUpvote = (postId: number) => {
     const newUpvotes = [...upvotes];
     newUpvotes[postId - 1]++;
     setUpvotes(newUpvotes);
   };
-
+  
   const handleDownvote = (postId: number) => {
     const newDownvotes = [...downvotes];
     newDownvotes[postId - 1]++;
     setDownvotes(newDownvotes);
-  };
-
+  };  
 
   return (
     <Container maxWidth="sm" style={{ minHeight: "100vh", padding: "16px" }}>
@@ -62,26 +83,32 @@ function App() {
           <Button onClick={switchUser} variant="outlined" color="primary">
             Switch User
           </Button>
+          <UserChangedNotification
+        open={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
+        userName={currentUser}
+      />
         </Box>
         <Paper elevation={3}>
+          <div style={{ maxHeight: "400px", overflowY: "auto" }}ref={messageContainerRef}>
           <List>
             {posts.map((post, index) => (
               <ListItem key={index}>
-                <Avatar>{post.user[0]}</Avatar>
+                <Avatar>{post.user.name[0]}</Avatar>
                 <Box ml={2}>
                   <Typography variant="subtitle1" fontWeight="bold">
-                    {post.user}
+                    {post.user.name}
                   </Typography>
                   <Typography variant="body1">{post.content}</Typography>
                 </Box>
-                <Box ml={2}>
+                <Box ml="Auto">
                   <Button
                     variant="text"
                     color="primary"
                     startIcon={<ThumbUp />}
                     onClick={() => handleUpvote(post.id)}
                   >
-                    Upvote ({upvotes[index]})
+                    ({upvotes[index]})
                   </Button>
                 </Box>
                 <Box ml={2}>
@@ -91,19 +118,20 @@ function App() {
                     startIcon={<ThumbDown />}
                     onClick={() => handleDownvote(post.id)}
                   >
-                    Downvote ({downvotes[index]})
+                    ({downvotes[index]})
                   </Button>
                 </Box>
               </ListItem>
             ))}
           </List>
+          </div>
         </Paper>
       </Box>
       <Box mt={2}>
         <Box display="flex" alignItems="center">
           <TextField
             fullWidth
-            label={`Add a new post as ${currentUser}`}
+            label={`Add a new post as ${currentUser.name}`}
             variant="outlined"
             value={newPost}
             onChange={(e) => setNewPost(e.target.value)}
