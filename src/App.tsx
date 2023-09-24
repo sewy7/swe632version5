@@ -6,6 +6,8 @@ import { Send, ThumbUp, ThumbDown } from "@mui/icons-material";
 import jsonData from "./data.json";
 import UserChangedNotification from "./Components/UserChangedNotification";
 import { Post, User } from "./Components/MessageContext";
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import Help from "./Components/Help";
 
 function App() {
   const [users, setUsers] = useState<User[]>(jsonData.users);
@@ -184,10 +186,15 @@ function App() {
         </Box>
       </Box>
       <Box mt={4} display="flex" justifyContent="center">
-      <Button variant="outlined" color="primary">
-        Help
-      </Button>
-    </Box>
+        <Link to="/Help">
+          <Button variant="outlined" color="primary">
+            Help
+          </Button>
+        </Link>
+      </Box>
+      <Routes>
+        <Route path="/help" Component={Help} />
+      </Routes>
     </Container>
   );
 }
