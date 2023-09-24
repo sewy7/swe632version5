@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Button,Container,Box,TextField,Typography,List,ListItem,Avatar,Divider,Paper,Menu,MenuItem,
+  Button,Container,Box,TextField,Typography,List, ListItem,Avatar,Divider,Paper, Menu,MenuItem,
 } from "@mui/material";
 import { Send, ThumbUp, ThumbDown } from "@mui/icons-material";
 import jsonData from "./data.json";
@@ -19,9 +19,12 @@ function App() {
   const [upvotes, setUpvotes] = useState(new Array(posts.length).fill(0));
   const [downvotes, setDownvotes] = useState(new Array(posts.length).fill(0));
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
+  const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
 
   const addPost = () => {
     if (newPost.trim() !== "" && currentUser) {
@@ -42,7 +45,8 @@ function App() {
 
   const scrollToBottom = () => {
     if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+      messageContainerRef.current.scrollTop =
+        messageContainerRef.current.scrollHeight;
     }
   };
 
@@ -81,6 +85,10 @@ function App() {
     setDownvotes(newDownvotes);
   };
 
+  const filteredPosts = selectedUser
+    ? posts.filter((post) => post.user.id === selectedUser.id)
+    : posts;
+
   return (
     <Container maxWidth="sm" style={{ minHeight: "100vh", padding: "16px" }}>
       <Typography variant="h1" align="center">
@@ -88,11 +96,7 @@ function App() {
       </Typography>
       <Divider />
       <Box mt={2}>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-        >
+        <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h4">Feed</Typography>
           <Button
             onClick={openUserMenu}
@@ -124,13 +128,14 @@ function App() {
             ))}
           </Menu>
         </Box>
+       
         <Paper elevation={3}>
           <div
             style={{ maxHeight: "400px", overflowY: "auto" }}
             ref={messageContainerRef}
           >
             <List>
-              {posts.map((post, index) => (
+              {filteredPosts.map((post, index) => (
                 <ListItem key={index}>
                   <Avatar>{post.user.name[0]}</Avatar>
                   <Box ml={2}>
@@ -184,6 +189,31 @@ function App() {
             Post
           </Button>
         </Box>
+        <Box mt={2} display="flex" alignItems="center">
+  <Typography variant="h4">Filter:</Typography>
+  <Button
+    onClick={() => setSelectedUser(null)}
+    variant="outlined"
+    color="primary"
+    size="small"
+    style={{ marginLeft: '10px', marginRight: '10px' }} // Add margin to this button
+  >
+    All Users
+  </Button>
+  {users.map((user, index) => (
+    <Button
+      key={user.id}
+      onClick={() => setSelectedUser(user)}
+      variant="outlined"
+      color="primary"
+      size="small"
+      style={{ marginRight: '8px' }} // Add margin to all user buttons
+    >
+      {user.name}
+    </Button>
+  ))}
+</Box>
+
       </Box>
       <Box mt={4} display="flex" justifyContent="center">
         <Link to="/Help">
