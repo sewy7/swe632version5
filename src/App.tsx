@@ -32,8 +32,7 @@ function App() {
       };
 
       setCurrentID(currentID + 1);
-
-      setPosts((prevPosts) => [...prevPosts, newPostObj]);
+      setPosts((prevPosts) => [newPostObj, ...prevPosts]);
       setNewPost("");
       setUpvotes((prevUpvotes) => [...prevUpvotes, 0]);
       setDownvotes((prevDownvotes) => [...prevDownvotes, 0]);
