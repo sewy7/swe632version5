@@ -8,6 +8,7 @@ import UserChangedNotification from "./Components/UserChangedNotification";
 import { Post, User } from "./Components/MessageContext";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import Help from "./Components/Help";
+import Documentation from "./Components/Documentation";
 
 function App() {
   const [users, setUsers] = useState<User[]>(jsonData.users);
@@ -191,8 +192,16 @@ function App() {
           </Button>
         </Link>
       </Box>
+      <Box mt={4} display="flex" justifyContent="center">
+        <Link to="/documentation">
+          <Button variant="outlined" color="primary">
+            Documentation
+          </Button>
+        </Link>
+      </Box>
       <Routes>
         <Route path="/help" Component={Help} />
+        <Route path="/documentation" Component={Documentation} />
       </Routes>
     </Container>
   );
