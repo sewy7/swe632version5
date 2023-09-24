@@ -89,6 +89,11 @@ function App() {
     ? posts.filter((post) => post.user.id === selectedUser.id)
     : posts;
 
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        addPost();
+      }
+    };
   return (
     <Container maxWidth="sm" style={{ minHeight: "100vh", padding: "16px" }}>
       <Typography variant="h1" align="center">
@@ -178,6 +183,7 @@ function App() {
             variant="outlined"
             value={newPost}
             onChange={(e) => setNewPost(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
           <Button
             onClick={addPost}
