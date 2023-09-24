@@ -183,6 +183,11 @@ function App() {
           </Button>
         </Box>
       </Box>
+      <Box mt={4} display="flex" justifyContent="center">
+      <Button variant="outlined" color="primary">
+        Help
+      </Button>
+    </Box>
     </Container>
   );
 }
