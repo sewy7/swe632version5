@@ -12,5 +12,6 @@ export interface User {
       upvotes: number;
       downvotes: number;
     };
+    timestamp: string;
   }
   

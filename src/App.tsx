@@ -33,6 +33,7 @@ function App() {
         user: currentUser,
         content: newPost,
         votes: { upvotes: 0, downvotes: 0 },
+        timestamp: new Date().toISOString(),
       };
 
       setCurrentID(currentID + 1);
@@ -148,6 +149,9 @@ function App() {
                       {post.user.name}
                     </Typography>
                     <Typography variant="body1">{post.content}</Typography>
+                    <Typography variant="caption" color="textSecondary">
+                       {new Date(post.timestamp).toLocaleString()} 
+                    </Typography>
                   </Box>
                   <Box ml="Auto">
                     <Button
