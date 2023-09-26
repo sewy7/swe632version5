@@ -1,6 +1,9 @@
 // Help.tsx
 import React from 'react';
-import { Container, Typography, Paper } from '@mui/material';
+import {   Button,Container,Box,TextField,Typography,List, ListItem,Avatar,Divider,Paper, Menu,MenuItem,
+} from '@mui/material';
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+
 
 const Help: React.FC = () => {
   return (
@@ -41,6 +44,13 @@ const Help: React.FC = () => {
           Have fun using DA LLAMA!
         </Typography>
       </Paper>
+      <Box mt={4} display="flex" justifyContent="center">
+        <Link to="https://reachforthesky70.github.io/revisedswe632project/">
+          <Button variant="outlined" color="primary">
+            Back
+          </Button>
+        </Link>
+      </Box>
     </Container>
   );
 };
