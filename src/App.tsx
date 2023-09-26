@@ -21,11 +21,37 @@ function App() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
-
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(
     null
   );
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedPost, setEditedPost] = useState("");
+  const [editPostId, setEditPostId] = useState<number | null>(null);
+    const handleEdit = (postId:number, content : string) => {
+    setIsEditing(true);
+    setEditPostId(postId);
+    setEditedPost(content);
+  };
 
+  const handleSaveEdit = () => {
+    if (editedPost.trim() !== "") {
+      const updatedPosts = posts.map((post) =>
+        post.id === editPostId
+          ? { ...post, content: editedPost, timestamp: new Date().toISOString() }
+          : post
+      );
+      setPosts(updatedPosts);
+    }
+    setIsEditing(false);
+    setEditPostId(null);
+    setEditedPost("");
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditPostId(null);
+    setEditedPost("");
+  };
   const addPost = () => {
     if (newPost.trim() !== "" && currentUser) {
       const newPostObj = {
@@ -140,42 +166,81 @@ function App() {
             style={{ maxHeight: "400px", overflowY: "auto" }}
             ref={messageContainerRef}
           >
-            <List>
-              {filteredPosts.map((post, index) => (
-                <ListItem key={index}>
-                  <Avatar>{post.user.name[0]}</Avatar>
-                  <Box ml={2}>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {post.user.name}
-                    </Typography>
-                    <Typography variant="body1">{post.content}</Typography>
-                    <Typography variant="caption" color="textSecondary">
-                       {new Date(post.timestamp).toLocaleString()} 
-                    </Typography>
-                  </Box>
-                  <Box ml="Auto">
+        <List>
+          {filteredPosts.map((post, index) => (
+            <ListItem key={index}>
+              <Avatar>{post.user.name[0]}</Avatar>
+              <Box ml={2}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {post.user.name}
+                </Typography>
+                {isEditing && editPostId === post.id ? (
+                  <TextField
+                    fullWidth
+                    value={editedPost}
+                    onChange={(e) => setEditedPost(e.target.value)}
+                  />
+                ) : (
+                  <Typography variant="body1">{post.content}</Typography>
+                )}
+                <Typography variant="caption" color="textSecondary">
+                  {new Date(post.timestamp).toLocaleString()}
+                </Typography>
+              </Box>
+              <Box ml="Auto">
+                <Button
+                  variant="text"
+                  color="primary"
+                  startIcon={<ThumbUp />}
+                  onClick={() => handleUpvote(post.id)}
+                >
+                  ({upvotes[index]})
+                </Button>
+              </Box>
+              <Box ml={2}>
+                <Button
+                  variant="text"
+                  color="secondary"
+                  startIcon={<ThumbDown />}
+                  onClick={() => handleDownvote(post.id)}
+                >
+                  ({downvotes[index]})
+                </Button>
+              </Box>
+              {currentUser.id === post.user.id && (
+                <Box ml={2}>
+                  {isEditing && editPostId === post.id ? (
+                    <>
+                      <Button
+                        variant="text"
+                        color="primary"
+                        onClick={handleSaveEdit}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        variant="text"
+                        color="secondary"
+                        onClick={handleCancelEdit}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
                     <Button
                       variant="text"
                       color="primary"
-                      startIcon={<ThumbUp />}
-                      onClick={() => handleUpvote(post.id)}
+                      onClick={() => handleEdit(post.id, post.content)}
                     >
-                      ({upvotes[index]})
+                      Edit
                     </Button>
-                  </Box>
-                  <Box ml={2}>
-                    <Button
-                      variant="text"
-                      color="secondary"
-                      startIcon={<ThumbDown />}
-                      onClick={() => handleDownvote(post.id)}
-                    >
-                      ({downvotes[index]})
-                    </Button>
-                  </Box>
-                </ListItem>
-              ))}
-            </List>
+                  )}
+                </Box>
+              )}
+            </ListItem>
+          ))}
+        </List>
+
           </div>
         </Paper>
       </Box>
