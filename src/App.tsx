@@ -116,20 +116,55 @@ function App() {
     ? posts.filter((post) => post.user.id === selectedUser.id)
     : posts;
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
       if (e.key === "Enter") {
         addPost();
       }
-    };
+  };
+  
+  const openDocumentation = () => {
+    setIsDocumentationOpen(true);
+    setIsHelpOpen(false);
+    scrollDownToContent();
+  };
+
+  const closeDocumentation = () => {
+    setIsDocumentationOpen(false);
+  };
+
+  const openHelp = () => {
+    setIsHelpOpen(true);
+    setIsDocumentationOpen(false);
+    scrollDownToContent();
+  };
+
+  const closeHelp = () => {
+    setIsHelpOpen(false);
+  };
+
+  const scrollDownToContent = () => {
+    const content = document.getElementById("content");
+    if (content) {
+      content.scrollIntoView(true);
+    }
+  };
+
+  const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const documentationRef = useRef<HTMLDivElement | null>(null);
+  const helpRef = useRef<HTMLDivElement | null>(null);
+
   return (
-    <Container maxWidth="sm" style={{ minHeight: "100vh", padding: "16px" }}>
+    <Container
+    maxWidth="sm"
+    style={{ minHeight: "100vh", padding: "16px", display: "flex", flexDirection: "column", alignItems: "center" }}
+  >
       <Typography variant="h1" align="center">
         DA LLAMA
       </Typography>
       <Divider />
       <Box mt={2}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">Feed</Typography>
           <Button
             onClick={openUserMenu}
             variant="outlined"
@@ -287,23 +322,52 @@ function App() {
       {user.name}
     </Button>
   ))}
-</Box>
+      </Box>
+      </Box>
 
+      <Box mt={2}>
+        {/* Button to toggle the Documentation component */}
+        <Button
+          variant="outlined"
+          style={{
+            backgroundColor: isDocumentationOpen ? "blue" : "white",
+            color: isDocumentationOpen ? "white" : "black"
+          }}
+          onClick={() => {
+            if (isDocumentationOpen) {
+              closeDocumentation();
+            } else {
+              openDocumentation();
+              closeHelp(); // Close the Help component when Documentation is opened
+            }
+          }}
+        >
+        Documentation
+        </Button>
+        {/* Button to toggle the Help component */}
+        <Button
+          variant="outlined"
+          style={{
+            backgroundColor: isHelpOpen ? "blue" : "white",
+            color: isHelpOpen ? "white" : "black"
+          }}
+          onClick={() => {
+            if (isHelpOpen) {
+              closeHelp();
+            } else {
+              openHelp();
+              closeDocumentation(); // Close the Documentation component when Help is opened
+            }
+          }}
+        >
+          Help
+        </Button>
       </Box>
-      <Box mt={4} display="flex" justifyContent="center">
-        <Link to="/Help">
-          <Button variant="outlined" color="primary">
-            Help
-          </Button>
-        </Link>
-      </Box>
-      <Box mt={4} display="flex" justifyContent="center">
-        <Link to="/documentation">
-          <Button variant="outlined" color="primary">
-            Documentation
-          </Button>
-        </Link>
-      </Box>
+
+      <div id="content">
+        {isDocumentationOpen && <Documentation />}
+        {isHelpOpen && <Help />}
+      </div>
       <Routes>
         <Route path="/help" Component={Help} />
         <Route path="/documentation" Component={Documentation} />

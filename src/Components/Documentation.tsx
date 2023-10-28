@@ -1,6 +1,5 @@
 import React from 'react';
-import { Button,Container,Box,TextField,Typography,List, ListItem,Avatar,Divider,Paper, Menu,MenuItem, } from '@mui/material';
-import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { Container,Typography,Paper,} from '@mui/material';
 
 const Documentation: React.FC = () => {
   return (
@@ -11,13 +10,6 @@ const Documentation: React.FC = () => {
          DA LLAMA is a project webapp made by Amin, Jessie, Ben and Bunny for SWE 632.
         </Typography>
       </Paper>
-      <Box mt={4} display="flex" justifyContent="center">
-        <Link to="https://reachforthesky70.github.io/revisedswe632project/">
-          <Button variant="outlined" color="primary">
-            Back
-          </Button>
-        </Link>
-      </Box>
     </Container>
   );
 };
