@@ -16,8 +16,7 @@ function App() {
   const [newPost, setNewPost] = useState("");
   const [currentID, setCurrentID] = useState(0);
   const [currentUser, setCurrentUser] = useState<User>(jsonData.users[0]);
-  const [upvotes, setUpvotes] = useState(new Array(posts.length).fill(0));
-  const [downvotes, setDownvotes] = useState(new Array(posts.length).fill(0));
+  const [postVotes, setPostVotes] = useState<{ [postId: number]: { upvotes: number; downvotes: number } }>({});
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
@@ -65,11 +64,12 @@ function App() {
       setCurrentID(currentID + 1);
       setPosts((prevPosts) => [newPostObj, ...prevPosts]);
       setNewPost("");
-      setUpvotes((prevUpvotes) => [...prevUpvotes, 0]);
-      setDownvotes((prevDownvotes) => [...prevDownvotes, 0]);
+      setPostVotes((prevVotes) => ({
+        ...prevVotes,
+        [currentID]: { upvotes: 0, downvotes: 0 },
+      }));
     }
   };
-
   const scrollToBottom = () => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTop =
@@ -100,18 +100,25 @@ function App() {
     closeUserMenu();
   };
 
-  const handleUpvote = (postId: number) => {
-    const newUpvotes = [...upvotes];
-    newUpvotes[postId - 1]++;
-    setUpvotes(newUpvotes);
-  };
+const handleUpvote = (postId: number) => {
+  setPostVotes((prevVotes) => ({
+    ...prevVotes,
+    [postId]: {
+      upvotes: (prevVotes[postId]?.upvotes || 0) + 1,
+      downvotes: prevVotes[postId]?.downvotes || 0,
+    },
+  }));
+};
 
-  const handleDownvote = (postId: number) => {
-    const newDownvotes = [...downvotes];
-    newDownvotes[postId - 1]++;
-    setDownvotes(newDownvotes);
-  };
-
+const handleDownvote = (postId: number) => {
+  setPostVotes((prevVotes) => ({
+    ...prevVotes,
+    [postId]: {
+      upvotes: prevVotes[postId]?.upvotes || 0,
+      downvotes: (prevVotes[postId]?.downvotes || 0) + 1,
+    },
+  }));
+};
   const filteredPosts = selectedUser
     ? posts.filter((post) => post.user.id === selectedUser.id)
     : posts;
@@ -223,24 +230,24 @@ function App() {
                 </Typography>
               </Box>
               <Box ml="Auto">
-                <Button
+              <Button
                   variant="text"
                   color="primary"
                   startIcon={<ThumbUp />}
                   onClick={() => handleUpvote(post.id)}
                 >
-                  ({upvotes[index]})
-                </Button>
+                  ({postVotes[post.id]?.upvotes || 0})
+              </Button>
               </Box>
               <Box ml={2}>
-                <Button
-                  variant="text"
-                  color="secondary"
-                  startIcon={<ThumbDown />}
-                  onClick={() => handleDownvote(post.id)}
-                >
-                  ({downvotes[index]})
-                </Button>
+              <Button
+                    variant="text"
+                    color="secondary"
+                    startIcon={<ThumbDown />}
+                    onClick={() => handleDownvote(post.id)}
+                  >
+                    ({postVotes[post.id]?.downvotes || 0})
+              </Button>
               </Box>
               {currentUser.id === post.user.id && (
                 <Box ml={2}>
