@@ -51,6 +51,11 @@ function App() {
     setEditPostId(null);
     setEditedPost("");
   };
+
+  const handleDelete = (postId: number) => {
+    const updatedPosts = posts.filter((post) => post.id !== postId);
+    setPosts(updatedPosts);
+  };
   const addPost = () => {
     if (newPost.trim() !== "" && currentUser) {
       const newPostObj = {
@@ -266,6 +271,13 @@ const handleDownvote = (postId: number) => {
                         onClick={handleCancelEdit}
                       >
                         Cancel
+                      </Button>
+                      <Button
+                        variant="text"
+                        color="secondary"
+                        onClick={() => handleDelete(post.id)}
+                      >
+                        Undo
                       </Button>
                     </>
                   ) : (
